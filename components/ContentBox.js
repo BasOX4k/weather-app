@@ -1,3 +1,4 @@
+"use client";
 import styles from "./ContentBox.module.css";
 
 export const ContentBox = ({ children }) => {

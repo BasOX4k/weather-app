@@ -1,3 +1,4 @@
+"use client";
 import { degToCompass } from "../services/converters";
 import {
   getTime,
@@ -36,7 +37,7 @@ export const MetricsBox = ({ weatherData, unitSystem }) => {
       />
       <MetricsCard
         title={"Sunrise"}
-        iconSrc={"/icons/sunrise.png"}
+        img={"/icons/sunrise.png"}
         metric={getTime(
           unitSystem,
           weatherData.sys.sunrise,

@@ -1,3 +1,4 @@
+"use client";
 import { getWeekDay, getTime, getAMPM } from "../services/helpers";
 import styles from "./DateAndTime.module.css";
 

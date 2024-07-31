@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { ctoF } from "../services/converters";
 import styles from "./MainCard.module.css";
@@ -17,8 +18,8 @@ export const MainCard = ({
       </h1>
       <p className={styles.description}>{description}</p>
       <Image
-        width="300px"
-        height="300px"
+        width="300"
+        height="300"
         src={`/icons/${iconName}.svg`}
         alt="weatherIcon"
       />
