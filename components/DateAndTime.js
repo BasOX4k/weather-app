@@ -6,9 +6,9 @@ export const DateAndTime = ({ weatherData, unitSystem }) => {
   return (
     <div className={styles.wrapper}>
       <h2>
-        {`${getWeekDay(weatherData)}, ${getTime(
+        {`${getWeekDay(weatherData.current.time)}, ${getTime(
           unitSystem,
-          weatherData.dt,
+          weatherData.current.time,
           weatherData.timezone
         )} ${getAMPM(unitSystem, weatherData.dt, weatherData.timezone)}`}
       </h2>

@@ -32,10 +32,18 @@ export const degToCompass = (num) => {
   return arr[val % 16];
 };
 
-export const unixToLocalTime = (unixSeconds, timezone) => {
-  let time = new Date((unixSeconds + timezone) * 1000)
-    .toISOString()
-    .match(/(\d{2}:\d{2})/)[0];
+export const localTime = (weatherTime, unitSystem) => {
 
-  return time.startsWith("0") ? time.substring(1) : time;
+  let frenchTime = new Date(weatherTime)
+
+  const format = {
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+
+  return unitSystem === "imperial" 
+
+  ? frenchTime.toLocaleTimeString('fr-FR', format)
+  : frenchTime.toLocaleTimeString('fr-FR', format)
+
 };
