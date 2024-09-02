@@ -1,9 +1,7 @@
-"use client";
 import Image from "next/image";
 import { ctoF } from "../services/converters";
 import styles from "./MainCard.module.css";
-// import { WeatherData } from "../pages/api/data";
-import { getAMPM } from "../services/helpers";
+
 
 export const MainCard = ({
   city,
@@ -20,9 +18,9 @@ export const MainCard = ({
       </h1>
       <p className={styles.description}>{description}</p>
       <Image
-        width="300"
-        height="300"
-        src={"/icons/${iconName}.svg"}
+        width="200"
+        height="200"
+        src={`/icons/${iconName}.svg`}
         alt="weatherIcon"
       />
       <h1 className={styles.temperature}>

@@ -1,4 +1,3 @@
-"use client";
 import styles from "./UnitSwitch.module.css";
 
 export const UnitSwitch = ({ onClick, unitSystem }) => {

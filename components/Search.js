@@ -1,4 +1,3 @@
-"use client";
 import styles from "./Search.module.css";
 
 export const Search = ({

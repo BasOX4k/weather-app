@@ -1,16 +1,20 @@
-"use client";
 import { getWeekDay, getTime, getAMPM } from "../services/helpers";
 import styles from "./DateAndTime.module.css";
 
 export const DateAndTime = ({ weatherData, unitSystem }) => {
+    let currentTime = weatherData.current.time, timezone = weatherData.timezone;
   return (
     <div className={styles.wrapper}>
       <h2>
-        {`${getWeekDay(weatherData.current.time)}, ${getTime(
-          unitSystem,
-          weatherData.current.time,
-          weatherData.timezone
-        )} ${getAMPM(unitSystem, weatherData.dt, weatherData.timezone)}`}
+        {`${getWeekDay( 
+            weatherData,
+            timezone
+        )}, ${getTime(
+        unitSystem,
+          currentTime,
+          timezone
+        
+        )} ${getAMPM(unitSystem, currentTime, timezone )}`}
       </h2>
     </div>
   );

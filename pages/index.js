@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 
 import { MainCard } from "../components/MainCard";
@@ -10,14 +9,12 @@ import { MetricsBox } from "../components/MetricsBox";
 import { UnitSwitch } from "../components/UnitSwitch";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { ErrorScreen } from "../components/ErrorScreen";
-import { getWeatherDescription } from "../services/helpers";
-import styles from "../styles/Home.module.css";
 import config from "../config.json";
-
+import styles from "../styles/Home.module.css";
+import { getWeatherDescription } from "../services/helpers";
 
 export const App = () => {
-  const [cityInput, setCityInput] = useState("config.city");
-  const [triggerFetch, setTriggerFetch] = useState(true);
+  const [cityInput, setCityInput] = useState(config.city);
   const [weatherData, setWeatherData] = useState();
   const [unitSystem, setUnitSystem] = useState("metric");
 
@@ -30,13 +27,22 @@ export const App = () => {
       });
       const data = await res.json();
       setWeatherData({ ...data });
-      setCityInput("");
     };
+
+    // Initial data fetch
     getData();
-  }, [triggerFetch]);
+
+    // Set up interval for data fetching every hour (3600000 ms)
+    const intervalId = setInterval(() => {
+      getData();
+    }, 3600000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [cityInput]); // Update when cityInput changes
 
   const changeSystem = () =>
-    unitSystem == "metric"
+    unitSystem === "metric"
       ? setUnitSystem("imperial")
       : setUnitSystem("metric");
 
@@ -45,17 +51,16 @@ export const App = () => {
       <MainCard
         city={config.city}
         country={config.country}
-        latitude={config.latitude}
-        longitude={config.longitude}
-        description={getWeatherDescription(weatherData.current.weather_code).description}
-        iconName={getWeatherDescription(weatherData.current.weather_code).iconName} // Corrected access to `isDay`
+        description={getWeatherDescription(weatherData.current.weather_code, weatherData.current.isDay).description}
+        iconName={getWeatherDescription(weatherData.current.weather_code, weatherData.current.isDay).iconName}
         unitSystem={unitSystem}
         weatherData={weatherData}
       />
       <ContentBox>
         <Header>
           <DateAndTime weatherData={weatherData} unitSystem={unitSystem} />
-          {/* <Search
+          {/* Uncomment if Search is needed
+          <Search
             placeHolder="Search a city..."
             value={cityInput}
             onFocus={(e) => {
@@ -66,8 +71,8 @@ export const App = () => {
             onKeyDown={(e) => {
               e.keyCode === 13 && setTriggerFetch(!triggerFetch);
               e.target.placeholder = "Search a city...";
-            }} */}
-          {/* /> */}
+            }}
+          /> */}
         </Header>
         <MetricsBox weatherData={weatherData} unitSystem={unitSystem} />
         <UnitSwitch onClick={changeSystem} unitSystem={unitSystem} />
@@ -78,7 +83,7 @@ export const App = () => {
       <Search
         onFocus={(e) => (e.target.value = "")}
         onChange={(e) => setCityInput(e.target.value)}
-        onKeyDown={(e) => e.keyCode === 13 && setTriggerFetch(!triggerFetch)}
+        onKeyDown={(e) => e.keyCode === 13 && setTriggerFetch((prev) => !prev)}
       />
     </ErrorScreen>
   ) : (

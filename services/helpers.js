@@ -1,6 +1,5 @@
-"use client";
 import {
-  localTime,
+  getLocalTime,
   kmToMiles,
   mpsToMph,
   timeTo12HourFormat,
@@ -18,12 +17,12 @@ export const getVisibility = (unitSystem, visibilityInMeters) =>
 
 export const getTime = (unitSystem, currentTime, timezone) =>
   unitSystem == "metric"
-    ? localTime(currentTime, timezone)
-    : timeTo12HourFormat(unixToLocalTime(currentTime, timezone));
+    ? getLocalTime(currentTime, timezone)
+    : timeTo12HourFormat(getLocalTime(currentTime, timezone));
 
 export const getAMPM = (unitSystem, currentTime, timezone) =>
   unitSystem === "imperial"
-    ? unixToLocalTime(currentTime, timezone).split(":")[0] >= 12
+    ? getLocalTime(currentTime, timezone).split(":")[0] >= 12
       ? "PM"
       : "AM"
     : "";
@@ -39,37 +38,41 @@ export const getWeekDay = (weatherData) => {
     "Saturday",
   ];
   return weekday[
-    new Date((weatherData.dt + weatherData.timezone) * 1000).getUTCDay()
+    new Date(weatherData.current.time).getUTCDay()
   ];
 };
 
 export const getWeatherDescription = (code, isDay) => {
-  const weatherCode={
+  const codeAttributes = {
     0: { description: "Clear sky", iconName: isDay ? "01d" : "01n" },
-    1: { description: "Mainly clear", iconName: isDay ? "02d" : "02n" },
-    2: { description: "Partly cloudy", iconName: isDay ? "03d" : "03n" },
-    3: { description: "Overcast", iconName: isDay ? "04d" : "04n" },
-    45: { description: "Fog", iconName: isDay ? "50d" : "50n" },
-    48: { description: "Depositing rime fog", iconName: isDay ? "50d" : "50n" },
-    51: { description: "Light Drizzle", iconName: isDay ? "09d" : "09n" },
-    53: { description: "Moderate Drizzle", iconName: isDay ? "09d" : "09n" },
-    55: { description: "Dense Drizzle", iconName: isDay ? "09d" : "09n" },
-    56: { description: "Light Freezing Drizzle", iconName: isDay ? "09d" : "09n" },
-    57: { description: "Dense Freezing Drizzle", iconName: isDay ? "09d" : "09n" },
-    61: { description: "Slight Rain", iconName: isDay ? "10d" : "10n" },
-    63: { description: "Moderate Rain", iconName: isDay ? "10d" : "10n" },
-    65: { description: "HeavyRain", iconName: isDay ? "10d" : "10n" },
-    66: { description: "Light Freezing Rain", iconName: isDay ? "13d" : "13n" },
-    67: { description: "Heavy Freezing Rain", iconName: isDay ? "13d" : "13n" },
-    71: { description: "Slight Snow", iconName: isDay ? "13d" : "13n" },
-    73: { description: "Moderate Snow", iconName: isDay ? "13d" : "13n" },
-    75: { description: "Heavy Snow", iconName: isDay ? "13d" : "13n" },
-    77: { description: "Snow Grains", iconName: isDay ? "13d" : "13n" },
-    80: { description: "Slight Rain showers", iconName: isDay ? "09d" : "09n" },
-    81: { description: "Moderate Rain showers", iconName: isDay ? "09d" : "09n" },  
-    82: { description: "Violent Rain showers", iconName: isDay ? "09d" : "09n" },
-    96: { description: "Slight Snow showers", iconName: isDay ? "13d" : "13n" },
-    99: { description: "Heavy Snow showers", iconName: isDay ? "13d" : "13n" },
+    1: { description: "Mainly clear", iconName: isDay ? "02n" : "02d" },
+    2: { description: "Partly cloudy", iconName: isDay ? "03n" : "03d" },
+    3: { description: "Overcast", iconName: isDay ? "04n" : "04d" },
+    45: { description: "Fog", iconName: isDay ? "50n" : "50d" },
+    48: { description: "Depositing rime fog", iconName: isDay ? "50n" : "50d" },
+    51: { description: "Light drizzle", iconName: isDay ? "09d" : "09d" },
+    53: { description: "Moderate drizzle", iconName: isDay ? "09d" : "09d" },
+    55: { description: "Dense drizzle", iconName: isDay ? "09n" : "09d" },
+    56: { description: "Light freezing drizzle", iconName: isDay ? "09n" : "09d" },
+    57: { description: "Dense freezing drizzle", iconName: isDay ? "09n" : "09nd" },
+    61: { description: "Slight Rain", iconName: isDay ? "10n" : "10d" },
+    63: { description: "Moderate Rain", iconName: isDay ? "10n" : "10d" },
+    65: { description: "Heavy Rain", iconName: isDay ? "10n" : "10d" },
+    66: { description: "Light freezing rain", iconName: isDay ? "10n" : "10d" },
+    67: { description: "Heavy freezing rain", iconName: isDay ? "10n" : "10d" },
+    71: { description: "Slight snow fall", iconName: isDay ? "13n" : "13d" },
+    73: { description: "Moderate snow fall", iconName: isDay ? "13n" : "13d" },
+    75: { description: "Heavy snow fall", iconName: isDay ? "13n" : "13d" },
+    77: { description: "Snow grains", iconName: isDay ? "13n" : "13d" },
+    80: { description: "Slight rain showers", iconName: isDay ? "09n" : "09d" },
+    81: { description: "Moderate Rain showers", iconName: isDay ? "09n" : "09d" },
+    82: { description: "Violent Rain showers", iconName: isDay ? "09n" : "09d" },
+    85: { description: "Slight snow showers", iconName: isDay ? "13n" : "13d" },
+    86: { description: "Heavy snow showers", iconName: isDay ? "13n" : "13d" },
+    95: { description: "Slight/Moderate thunderstorm", iconName: isDay ? "11n" : "11d" },
+    96: { description: "Thunderstorm with slight hail", iconName: isDay ? "11n" : "11d" },
+    99: { description: "Thunderstorm with heavy hail", iconName: isDay ? "11n" : "11d" },
   };
-  return weatherCode[code] || { description: "Unknown", iconName: "unknown" };
-}
+
+  return codeAttributes[code] || { description: "No info :(", iconName: "question-mark" };
+};

@@ -1,4 +1,3 @@
-"use client";
 import { degToCompass } from "../services/converters";
 import {
   getTime,
@@ -8,14 +7,14 @@ import {
 } from "../services/helpers";
 import { MetricsCard } from "./MetricsCard";
 import styles from "./MetricsBox.module.css";
-
+import config from "../config.json";
 export const MetricsBox = ({ weatherData, unitSystem }) => {
   return (
     <div className={styles.wrapper}>
       <MetricsCard
         title={"Humidity"}
         iconSrc={"/icons/humidity.png"}
-        metric={weatherData.current.relative_humidity_2m}
+        metric={(unitSystem, weatherData.current.relative_humidity_2m)}
         unit={"%"}
       />
       <MetricsCard
@@ -32,7 +31,7 @@ export const MetricsBox = ({ weatherData, unitSystem }) => {
       <MetricsCard
         title={"Visibility"}
         iconSrc={"/icons/binocular.png"}
-        metric={getVisibility(unitSystem, weatherData.hourly.visibility[0])}
+        metric={getVisibility(unitSystem, weatherData.hourly.visibility[new Date().getHours()])}
         unit={unitSystem == "metric" ? "km" : "miles"}
       />
       <MetricsCard
@@ -40,13 +39,11 @@ export const MetricsBox = ({ weatherData, unitSystem }) => {
         iconSrc={"/icons/sunrise.png"}
         metric={getTime(
           unitSystem,
-          weatherData.daily.sunrise[0],
-          weatherData.timezone
+          weatherData.daily.sunrise[0]
         )}
         unit={getAMPM(
           unitSystem,
-          weatherData.daily.sunrise[0],
-          weatherData.timezone
+          weatherData.daily.sunrise
         )}
       />
       <MetricsCard
@@ -54,10 +51,9 @@ export const MetricsBox = ({ weatherData, unitSystem }) => {
         iconSrc={"/icons/sunset.png"}
         metric={getTime(
           unitSystem,
-          weatherData.daily.sunset[0],
-          weatherData.timezone
+          weatherData.daily.sunset[0]
         )}
-        unit={getAMPM(unitSystem, weatherData.sunset, weatherData.timezone[0])}
+        unit={getAMPM(unitSystem, weatherData.daily.sunset)}
       />
     </div>
   );
